@@ -30,6 +30,8 @@ local command = {
 
 	run = function(options)
 		local h = levee.Hub()
+		h.stdin = setmetatable({hub = h, no = 0}, h.io.R_mt)
+		h.stdin.r_ev = h:register_nopoll(0, true)
 
 		local count = 0
 		local groups = {}
@@ -37,17 +39,20 @@ local command = {
 		h:spawn(function()
 			while true do
 				h:sleep(1000)
-				print("---")
-				local ordered = {}
-				for k, v in pairs(groups) do table.insert(ordered, {k=k, v=v}) end
-				table.sort(ordered, function(a, b) return a.v > b.v end)
-				for __, i in ipairs(ordered) do print(i.k, i.v) end
-				groups = {}
+
+				if options.c then
+					print("---")
+					local ordered = {}
+					for k, v in pairs(groups) do table.insert(ordered, {k=k, v=v}) end
+					table.sort(ordered, function(a, b) return a.v > b.v end)
+					for __, i in ipairs(ordered) do print(i.k, i.v) end
+					groups = {}
+				else
+					print(count)
+					count = 0
+				end
 			end
 		end)
-
-		h.stdin = setmetatable({hub = h, no = 0}, h.io.R_mt)
-		h.stdin.r_ev = h:register_nopoll(0, true)
 
 		local stream = h.stdin:stream()
 		while true do
@@ -72,7 +77,9 @@ local command = {
 
 				groups[line] = (groups[line] or 0) + 1
 			end
-			-- count = count + 1
+
+			count = count + 1
+
 			h:continue()
 		end
 	end,
