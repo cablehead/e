@@ -12,7 +12,7 @@ end
 
 local command = {
 	usage = function()
-    return [[Usage: e [options] ]]
+		return [[Usage: e [options] ]]
 	end,
 
 	parse = function(argv)
@@ -82,19 +82,19 @@ local command = {
 local function main()
 	local argv = _.argv(arg)
 
-  local nxt = argv:peek()
-  if nxt == "-h" or nxt == "--help" then
-    io.stderr:write(command.usage() .. "\n")
-    os.exit(1)
-  end
+	local nxt = argv:peek()
+	if nxt == "-h" or nxt == "--help" then
+		io.stderr:write(command.usage() .. "\n")
+		os.exit(1)
+	end
 
-  local options = command.parse(argv)
-  if not options then
-    io.stderr:write(command.usage() .. "\n")
-    os.exit(1)
-  end
+	local options = command.parse(argv)
+	if not options then
+		io.stderr:write(command.usage() .. "\n")
+		os.exit(1)
+	end
 
-  return command.run(options)
+	return command.run(options)
 end
 
 
