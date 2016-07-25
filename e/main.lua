@@ -30,8 +30,12 @@ local command = {
 
 	run = function(options)
 		local h = levee.Hub()
-		h.stdin = setmetatable({hub = h, no = 0}, h.io.R_mt)
-		h.stdin.r_ev = h:register_nopoll(0, true)
+		-- h.stdin = setmetatable({hub = h, no = 0}, h.io.R_mt)
+		-- h.stdin.r_ev = h:register_nopoll(0, true)
+
+		io.stdin:setvbuf("no")
+		_.fcntl_nonblock(0)
+		h.stdin = h.io:r(0)
 
 		local count = 0
 		local groups = {}
@@ -80,7 +84,7 @@ local command = {
 
 			count = count + 1
 
-			h:continue()
+			-- h:continue()
 		end
 	end,
 }
